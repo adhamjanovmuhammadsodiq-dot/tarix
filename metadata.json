@@ -1,0 +1,6 @@
+{
+  "name": "TARIX OLAMI",
+  "description": "Tarixni o‘rganish uchun zamonaviy, interaktiv ta'lim platformasi: Qadimgi dunyo, Rim raqamlari, testlar va xronologiya.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
