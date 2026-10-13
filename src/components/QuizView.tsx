@@ -82,18 +82,21 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizCompleted }
       // Quiz finished
       setQuizCompleted(true);
 
+      const allAnswers = {
+        ...selectedAnswers,
+        ...(currentSelectedOption !== null ? { [currentIndex]: currentSelectedOption } : {}),
+      };
+
       // Calculate score
       let correct = 0;
       activeQuestions.forEach((q, idx) => {
-        if (selectedAnswers[idx] === q.correctAnswer) {
+        if (allAnswers[idx] === q.correctAnswer) {
           correct++;
         }
       });
-      // also check current question
-      if (currentSelectedOption === currentQ.correctAnswer) {
-        // already in selectedAnswers
-      }
-      const percent = Math.round((correct / activeQuestions.length) * 100);
+
+      const totalCount = activeQuestions.length || 1;
+      const percent = Math.round((correct / totalCount) * 100);
 
       const catLabel =
         selectedCategory === 'all'

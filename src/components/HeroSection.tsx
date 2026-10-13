@@ -47,6 +47,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           alt="Qadimgi tarix manzarasi"
           className="w-full h-full object-cover object-top"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.currentTarget as HTMLElement).style.display = 'none';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-stone-950 via-stone-950/90 to-stone-950 light:from-[#FAF7F2] light:via-[#FAF7F2]/90 light:to-[#FAF7F2]" />
       </div>
@@ -171,6 +174,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   alt="Qadimgi Rim Forumi va Kolizey"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLElement).style.display = 'none';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/30 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-stone-100">

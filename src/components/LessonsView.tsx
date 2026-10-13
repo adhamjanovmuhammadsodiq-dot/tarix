@@ -111,6 +111,9 @@ export const LessonsView: React.FC<LessonsViewProps> = ({
                 alt={selectedLesson.title}
                 className="w-full h-full object-cover object-center"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.currentTarget as HTMLElement).style.display = 'none';
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/50 to-transparent" />
               <div className="absolute bottom-4 left-6 right-6">
@@ -609,6 +612,9 @@ export const LessonsView: React.FC<LessonsViewProps> = ({
                         alt={lesson.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent" />
                       <div className="absolute top-3 left-3 flex items-center gap-1.5">

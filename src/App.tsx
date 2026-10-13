@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import React, { Component, ErrorInfo, ReactNode, useState, useEffect } from 'react';
 import { ActiveTab, Lesson, UserProgress } from './types';
 import { LESSONS } from './data/lessonsData';
 import { QUIZ_QUESTIONS } from './data/quizQuestions';
@@ -22,6 +22,62 @@ import { QuizView } from './components/QuizView';
 import { TimelineView } from './components/TimelineView';
 import { ProgressView } from './components/ProgressView';
 import { Footer } from './components/Footer';
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('TARIX OLAMI ilovasida xatolik:', error, errorInfo);
+  }
+
+  handleReload = () => {
+    this.setState({ hasError: false });
+    window.location.reload();
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-stone-950 text-stone-100 flex items-center justify-center p-6 text-center">
+          <div className="max-w-md p-8 rounded-2xl border border-stone-800 bg-stone-900 shadow-xl space-y-4">
+            <div className="w-12 h-12 mx-auto rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-xl font-bold font-cinzel">
+              !
+            </div>
+            <h2 className="font-cinzel text-xl font-bold text-stone-100">
+              Kutilmagan xatolik yuz berdi
+            </h2>
+            <p className="text-xs text-stone-400 leading-relaxed">
+              Dastur ishida vaqtinchalik muammo aniqlandi. Iltimos, sahifani qayta yuklang.
+            </p>
+            <button
+              onClick={this.handleReload}
+              className="px-6 py-2.5 rounded-xl bg-amber-500 text-stone-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+            >
+              Sahifani qayta yuklash
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function MainApp() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
@@ -178,6 +234,9 @@ function MainApp() {
                               alt={lesson.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLElement).style.display = 'none';
+                              }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent" />
                             <div className="absolute bottom-3 left-3 flex items-center gap-2">
@@ -295,8 +354,10 @@ function MainApp() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <MainApp />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <MainApp />
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
