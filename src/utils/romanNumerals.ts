@@ -133,16 +133,98 @@ const ROMAN_MAP: { value: number; symbol: string }[] = [
   { value: 1, symbol: 'I' },
 ];
 
+export interface HistoricalYearRoman {
+  year: number;
+  roman: string;
+  title: string;
+  era: string;
+}
+
+export const FAMOUS_HISTORICAL_YEARS: HistoricalYearRoman[] = [
+  { year: 753, roman: 'DCCCLIII', title: 'Rim shahriga asos solingan yil (mil. avv. 753)', era: 'Qadimgi Rim' },
+  { year: 530, roman: 'DXXX', title: 'To‘marisning Kir II ustidan g‘alabasi (mil. avv. 530)', era: 'O‘zbekiston tarixi' },
+  { year: 509, roman: 'DIX', title: 'Rim Respublikasi e’lon qilinishi (mil. avv. 509)', era: 'Qadimgi Rim' },
+  { year: 490, roman: 'CDXC', title: 'Marafon jangi (mil. avv. 490)', era: 'Qadimgi Yunoniston' },
+  { year: 329, roman: 'CCCXXIX', title: 'Spitamenning Iskandarga qarshi kurashi (mil. avv. 329)', era: 'O‘zbekiston tarixi' },
+  { year: 44, roman: 'XLIV', title: 'Yuliy Sezar o‘ldirilishi (mil. avv. 44)', era: 'Qadimgi Rim' },
+  { year: 27, roman: 'XXVII', title: 'Rim imperiyasining boshlanishi (mil. avv. 27)', era: 'Qadimgi Rim' },
+  { year: 476, roman: 'CDLXXVI', title: 'G‘arbiy Rim imperiyasining qulashi (milodiy 476)', era: 'Qadimgi Rim' },
+  { year: 783, roman: 'DCCLXXXIII', title: 'Muhammad al-Xorazmiy tavalludi (milodiy 783)', era: 'Sharq Renessansi' },
+  { year: 973, roman: 'CMLXXIII', title: 'Abu Rayhon Beruniy tavalludi (milodiy 973)', era: 'Sharq Renessansi' },
+  { year: 980, roman: 'CMLXXX', title: 'Abu Ali ibn Sino tavalludi (milodiy 980)', era: 'Sharq Renessansi' },
+  { year: 1221, roman: 'MCCXXI', title: 'Jaloliddin Manguberdi mo‘g‘ullarga qarshi kurashi (1221)', era: 'O‘zbekiston tarixi' },
+  { year: 1336, roman: 'MCCCXXXVI', title: 'Sohibqiron Amir Temur tavalludi (1336)', era: 'Temuriylar' },
+  { year: 1370, roman: 'MCCCLXX', title: 'Amir Temurning taxtga o‘tirishi (1370)', era: 'Temuriylar' },
+  { year: 1394, roman: 'MCCCXCIV', title: 'Mirzo Ulug‘bek tavalludi (1394)', era: 'Temuriylar' },
+  { year: 1405, roman: 'MCDV', title: 'Amir Temurning vafoti (1405)', era: 'Temuriylar' },
+  { year: 1441, roman: 'MCDXLI', title: 'Hazrat Alisher Navoiy tavalludi (1441)', era: 'Temuriylar' },
+  { year: 1492, roman: 'MCDXCII', title: 'Kolumb Amerika qit’asini kashf etishi (1492)', era: 'Jahon tarixi' },
+  { year: 1494, roman: 'MCDXCIV', title: 'Zahiriddin Muhammad Bobur tavalludi (1494)', era: 'O‘zbekiston tarixi' },
+  { year: 1991, roman: 'MCMXCI', title: 'O‘zbekiston Mustaqilligi e’lon qilinishi (1991)', era: 'Yangi O‘zbekiston' },
+  { year: 2026, roman: 'MMXXVI', title: 'Hozirgi yilimiz (2026)', era: 'XXI asr' },
+];
+
+/**
+ * Sonni xonalar bo'yicha Rim raqami tarkibiga ajratish
+ * Masalan: 1994 -> "M (1000) + CM (900) + XC (90) + IV (4)"
+ */
+export function getDecompositionString(num: number): string {
+  if (num < 1 || num > 3999 || !Number.isInteger(num)) return '';
+
+  const thousands = Math.floor(num / 1000) * 1000;
+  const hundreds = Math.floor((num % 1000) / 100) * 100;
+  const tens = Math.floor((num % 100) / 10) * 10;
+  const ones = num % 10;
+
+  const parts: string[] = [];
+  if (thousands > 0) {
+    const r = arabicToRoman(thousands).result;
+    if (r) parts.push(`${r} (${thousands})`);
+  }
+  if (hundreds > 0) {
+    const r = arabicToRoman(hundreds).result;
+    if (r) parts.push(`${r} (${hundreds})`);
+  }
+  if (tens > 0) {
+    const r = arabicToRoman(tens).result;
+    if (r) parts.push(`${r} (${tens})`);
+  }
+  if (ones > 0) {
+    const r = arabicToRoman(ones).result;
+    if (r) parts.push(`${r} (${ones})`);
+  }
+
+  return parts.join(' + ');
+}
+
+/**
+ * Berilgan oraliqdagi barcha Rim raqamlarini hisoblash
+ */
+export function getRomanRange(
+  from: number,
+  to: number
+): { arabic: number; roman: string; breakdown: string }[] {
+  const start = Math.max(1, Math.min(from, to));
+  const end = Math.min(3999, Math.max(from, to));
+  const list: { arabic: number; roman: string; breakdown: string }[] = [];
+
+  for (let i = start; i <= end; i++) {
+    const conv = arabicToRoman(i);
+    const breakdown = getDecompositionString(i);
+    list.push({
+      arabic: i,
+      roman: conv.result || '',
+      breakdown,
+    });
+  }
+  return list;
+}
+
 /**
  * 1 dan 100 gacha to'liq jadvalni olish
  */
-export function getAll1to100(): { arabic: number; roman: string }[] {
-  const result: { arabic: number; roman: string }[] = [];
-  for (let i = 1; i <= 100; i++) {
-    const conv = arabicToRoman(i);
-    result.push({ arabic: i, roman: conv.result || '' });
-  }
-  return result;
+export function getAll1to100(): { arabic: number; roman: string; breakdown: string }[] {
+  return getRomanRange(1, 100);
 }
 
 /**

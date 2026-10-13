@@ -87,7 +87,34 @@ export const LessonsView: React.FC<LessonsViewProps> = ({
             <span>Barcha darslar ro‘yxatiga qaytish</span>
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Quick Switch to the other grade */}
+            {selectedLesson.grade === '5-sinf' ? (
+              <button
+                onClick={() => {
+                  const first6th = lessons.find((l) => l.grade === '6-sinf');
+                  if (first6th) onSelectLesson(first6th);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 light:bg-amber-100 light:text-amber-900 light:border-amber-300 transition-colors cursor-pointer"
+                title="6-sinf darslariga o‘tish"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>6-sinf darslariga o‘tish →</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  const first5th = lessons.find((l) => l.grade === '5-sinf');
+                  if (first5th) onSelectLesson(first5th);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 light:bg-amber-100 light:text-amber-900 light:border-amber-300 transition-colors cursor-pointer"
+                title="5-sinf darslariga o‘tish"
+              >
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>← 5-sinf darslariga o‘tish</span>
+              </button>
+            )}
+
             <button
               onClick={() => onToggleCompleteLesson(selectedLesson.id)}
               className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer border ${
@@ -444,8 +471,34 @@ export const LessonsView: React.FC<LessonsViewProps> = ({
           </div>
         )}
 
+        {/* Special Grade Transition Card when completing 5th grade */}
+        {selectedLesson.grade === '5-sinf' && nextLesson?.grade === '6-sinf' && (
+          <div className="mt-10 p-5 rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent light:bg-amber-50/80 light:border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500 text-stone-950 font-bold flex items-center justify-center shrink-0 text-lg">
+                🎓
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-stone-100 light:text-stone-900">
+                  5-sinf darslari yakunlanmoqda!
+                </h4>
+                <p className="text-xs text-stone-400 light:text-stone-600 mt-0.5">
+                  Keyingi bosqich: 6-sinf "Qadimgi dunyo tarixi" dasturiga to‘g‘ridan-to‘g‘ri o‘tish.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => onSelectLesson(nextLesson)}
+              className="px-4 py-2 rounded-xl bg-amber-500 text-stone-950 font-bold text-xs hover:bg-amber-400 transition-colors shrink-0 shadow cursor-pointer flex items-center gap-1.5"
+            >
+              <span>6-sinf darslariga o‘tish</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Previous Lesson and Next Lesson Navigation */}
-        <div className="mt-12 pt-6 border-t border-stone-800 light:border-stone-300 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-8 pt-6 border-t border-stone-800 light:border-stone-300 flex flex-col sm:flex-row items-center justify-between gap-4">
           {prevLesson ? (
             <button
               onClick={() => onSelectLesson(prevLesson)}
@@ -552,6 +605,42 @@ export const LessonsView: React.FC<LessonsViewProps> = ({
           </span>
         </button>
       </div>
+
+      {/* Grade Guide Banner */}
+      {selectedGrade === '5-sinf' && (
+        <div className="mb-6 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 light:bg-amber-50 light:border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="text-xs text-stone-300 light:text-stone-700 leading-relaxed">
+            <strong className="text-amber-400 light:text-amber-900 block sm:inline mr-2 font-semibold">
+              5-sinf kursi: "Tarixdan hikoyalar"
+            </strong>
+            Tarix fani va vaqt hisobi, To‘maris va Shiroq, Buyuk Ipak yo‘li, Amir Temur hamda Sharq allomalari.
+          </div>
+          <button
+            onClick={() => setSelectedGrade('6-sinf')}
+            className="text-xs font-bold text-amber-400 light:text-amber-800 hover:underline shrink-0 flex items-center gap-1 cursor-pointer"
+          >
+            <span>6-sinfga o‘tish</span>
+            <span>→</span>
+          </button>
+        </div>
+      )}
+
+      {selectedGrade === '6-sinf' && (
+        <div className="mb-6 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 light:bg-amber-50 light:border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="text-xs text-stone-300 light:text-stone-700 leading-relaxed">
+            <strong className="text-amber-400 light:text-amber-900 block sm:inline mr-2 font-semibold">
+              6-sinf kursi: "Qadimgi dunyo tarixi"
+            </strong>
+            Qadimgi Misr ehromlari, Mesopotamiya, Qadimgi Yunoniston, Rim respublikasi va imperiyasi, Spitamen jasorati.
+          </div>
+          <button
+            onClick={() => setSelectedGrade('5-sinf')}
+            className="text-xs font-bold text-amber-400 light:text-amber-800 hover:underline shrink-0 flex items-center gap-1 cursor-pointer"
+          >
+            <span>← 5-sinfga o‘tish</span>
+          </button>
+        </div>
+      )}
 
       {/* Category Filter Tabs */}
       <div className="flex flex-wrap items-center gap-2 mb-6">

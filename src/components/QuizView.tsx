@@ -411,6 +411,20 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizCompleted }
   }
 
   // 3. Active Quiz In-Progress Screen
+  if (!currentQ) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
+        <p className="text-sm text-stone-400 light:text-stone-600">Savollar topilmadi yoki test yakunlandi.</p>
+        <button
+          onClick={handleRestart}
+          className="px-6 py-2.5 rounded-xl bg-amber-500 text-stone-950 font-bold text-xs hover:bg-amber-400 cursor-pointer"
+        >
+          Testni qayta boshlash
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Quiz Progress Header */}

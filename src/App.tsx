@@ -82,6 +82,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 function MainApp() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [homeGradeTab, setHomeGradeTab] = useState<'5-sinf' | '6-sinf'>('5-sinf');
   const [progress, setProgress] = useState<UserProgress>(() => getSavedProgress());
 
   // Save progress whenever it changes
@@ -205,23 +206,56 @@ function MainApp() {
                   <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
                       <span className="text-xs font-bold uppercase tracking-widest text-amber-400 light:text-amber-800">
-                        5- va 6-sinf o‘quv dasturi
+                        Maktab darsliklari dasturi
                       </span>
                       <h3 className="font-cinzel text-2xl sm:text-3xl font-bold text-stone-100 light:text-stone-900 mt-1">
-                        Tanlangan tarix darslari
+                        Tarix darslari: 5-sinf va 6-sinf
                       </h3>
                     </div>
+
+                    {/* Prominent Grade Toggle on Homepage */}
+                    <div className="inline-flex p-1 rounded-xl bg-stone-900/90 light:bg-stone-200 border border-stone-800 light:border-stone-300">
+                      <button
+                        onClick={() => setHomeGradeTab('5-sinf')}
+                        className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                          homeGradeTab === '5-sinf'
+                            ? 'bg-amber-500 text-stone-950 shadow-sm'
+                            : 'text-stone-300 light:text-stone-700 hover:text-stone-100'
+                        }`}
+                      >
+                        <span>5-sinf darslari</span>
+                      </button>
+                      <button
+                        onClick={() => setHomeGradeTab('6-sinf')}
+                        className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                          homeGradeTab === '6-sinf'
+                            ? 'bg-amber-500 text-stone-950 shadow-sm'
+                            : 'text-stone-300 light:text-stone-700 hover:text-stone-100'
+                        }`}
+                      >
+                        <span>6-sinf darslari</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Grade Banner Subtitle */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-stone-400 light:text-stone-600 border-b border-stone-900 light:border-stone-200 pb-3 gap-2">
+                    <span>
+                      {homeGradeTab === '5-sinf'
+                        ? '5-sinf kursi: "Tarixdan hikoyalar" (Vaqt hisobi, To‘maris, Shiroq, Amir Temur, Sharq allomalari)'
+                        : '6-sinf kursi: "Qadimgi dunyo tarixi" (Qadimgi Misr, Bobil, Yunoniston, Rim, Spitamen, Dunyo xaritasi)'}
+                    </span>
                     <button
                       onClick={() => handleTabChange('lessons')}
-                      className="text-xs font-bold text-amber-400 light:text-amber-800 hover:underline flex items-center gap-1 cursor-pointer self-start sm:self-auto"
+                      className="font-bold text-amber-400 light:text-amber-800 hover:underline flex items-center gap-1 cursor-pointer shrink-0"
                     >
-                      <span>Barcha {LESSONS.length} ta darsni ko‘rish (5- va 6-sinf)</span>
+                      <span>Barcha darslar ro‘yxati</span>
                       <span>→</span>
                     </button>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {LESSONS.slice(0, 3).map((lesson) => (
+                    {LESSONS.filter((l) => l.grade === homeGradeTab).slice(0, 3).map((lesson) => (
                       <div
                         key={lesson.id}
                         onClick={() => handleSelectLesson(lesson)}
